@@ -12,9 +12,15 @@ export const ButtonStyle = css`
   gap: 10px;
   font-weight: 600;
   font-family: "Poppins ", sans-serif;
+ 
   svg {
     height: 16px;
   }
+  ${(props) => props.block && css`
+    display: block;
+    width: 100%;
+  `}
+
   ${(props) =>
     props.white &&
     !props.outline &&

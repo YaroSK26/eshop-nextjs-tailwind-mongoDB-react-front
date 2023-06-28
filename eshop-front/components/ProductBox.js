@@ -6,7 +6,9 @@ import Link from "next/link";
 import { CartContext } from "./CartContext";
 import { useContext } from "react";
 
-const ProductWrapper = styled.div``;
+const ProductWrapper = styled.div`
+
+`;
 
 const WhiteBox = styled(Link)`
   background-color: white;
