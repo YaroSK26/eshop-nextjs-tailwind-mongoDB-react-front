@@ -80,23 +80,27 @@ export default function CartPage() {
   const [streetAddress, setStreetAddress] = useState("");
   const [country, setCountry] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-useEffect(() => {
-  if (cartProducts.length > 0) {
-    axios.post("/api/cart", { ids: cartProducts }).then((response) => {
-      setProducts(response.data);
-    });
-  } else {
-    setProducts([]);
-  }
+ const [isLoading, setIsLoading] = useState(false); // Pridaný stav pre načítavanie
 
-  if (
-    typeof window !== "undefined" &&
-    window.location.href.includes("success")
-  ) {
-    setIsSuccess(true);
-    clearCart();
-  }
-}, [cartProducts, clearCart]);
+ useEffect(() => {
+   if (cartProducts.length > 0) {
+     setIsLoading(true); // Nastavenie načítavania pred požiadavkou na server
+     axios.post("/api/cart", { ids: cartProducts }).then((response) => {
+       setProducts(response.data);
+       setIsLoading(false); // Zastavenie načítavania po úspešnom získaní údajov
+     });
+   } else {
+     setProducts([]);
+   }
+
+   if (
+     typeof window !== "undefined" &&
+     window.location.href.includes("success")
+   ) {
+     setIsSuccess(true);
+     clearCart();
+   }
+ }, [cartProducts, clearCart]);
 
 
 
