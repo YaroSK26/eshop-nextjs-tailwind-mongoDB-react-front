@@ -9,7 +9,6 @@ import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../components/CartContext";
 import axios from "axios";
 import Table from "../components/Table";
-import ButtonLink from "../components/ButtonLink";
 import Input from "../components/Input";
 
 const ColumnsWrapper = styled.div`
@@ -71,7 +70,7 @@ const CityHolder = styled.div`
 `;
 
 export default function CartPage() {
-  const { cartProducts, addProduct, removeProduct} =
+  const { cartProducts, addProduct, removeProduct, clearCart } =
     useContext(CartContext);
   const [products, setProducts] = useState([]);
   const [name, setName] = useState("");
@@ -81,49 +80,58 @@ export default function CartPage() {
   const [streetAddress, setStreetAddress] = useState("");
   const [country, setCountry] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-  useEffect(() => {
-    if (cartProducts.length > 0) {
-      axios.post("/api/cart", { ids: cartProducts }).then((response) => {
-        setProducts(response.data);
-      });
-    } else {
-      setProducts([]);
-    }
-  }, [cartProducts]);
-  useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
-    if (window?.location.href.includes("success")) {
-      setIsSuccess(true);
-      
-    }
-  }, []);
+useEffect(() => {
+  if (cartProducts.length > 0) {
+    axios.post("/api/cart", { ids: cartProducts }).then((response) => {
+      setProducts(response.data);
+    });
+  } else {
+    setProducts([]);
+  }
+
+  if (
+    typeof window !== "undefined" &&
+    window.location.href.includes("success")
+  ) {
+    setIsSuccess(true);
+    clearCart();
+  }
+}, [cartProducts, clearCart]);
+
+
+
   function moreOfThisProduct(id) {
     addProduct(id);
   }
   function lessOfThisProduct(id) {
     removeProduct(id);
   }
-  async function goToPayment() {
-    const response = await axios.post("/api/checkout", {
-      name,
-      email,
-      city,
-      postalCode,
-      streetAddress,
-      country,
-      cartProducts,
-    });
-    if (response.data.url) {
-      window.location = response.data.url;
+async function goToPayment() {
+  const response = await axios.post("/api/checkout", {
+    name,
+    email,
+    city,
+    postalCode,
+    streetAddress,
+    country,
+    cartProducts,
+  });
+  if (response.data.url) {
+    window.location = response.data.url;
+    if (window.location.href.includes("success")) {
+      setIsSuccess(true);
+      clearCart();
     }
   }
-  let total = 0;
-  for (const productId of cartProducts) {
-    const price = products.find((p) => p._id === productId)?.price || 0;
-    total += price;
-  }
+}
+
+
+
+let total = cartProducts.reduce((sum, productId) => {
+  const price = products.find((p) => p._id === productId)?.price || 0;
+  return sum + price;
+}, 0);
+
 
   if (isSuccess) {
     return (
@@ -243,7 +251,7 @@ export default function CartPage() {
                 name="country"
                 onChange={(ev) => setCountry(ev.target.value)}
               />
-              <PrimaryButton  primary block onClick={goToPayment}>
+              <PrimaryButton primary block onClick={goToPayment}>
                 Continue to payment
               </PrimaryButton>
             </Box>
