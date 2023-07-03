@@ -23,6 +23,7 @@ const WhiteBox = styled(Link)`
     max-width: 100%;
     max-height: 80px;
   }
+  
 `;
 
 const Title = styled(Link)`
@@ -38,14 +39,25 @@ const ProductInfoBox = styled.div`
 `;
 
 const PriceRow = styled.div`
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: space-between;
   margin-top: 5px;
+  gap:10px;
+ 
+
+  @media screen and (min-width: 768px) {
+    display: flex;
+    margin-top: 2px;
+
+  }
 `;
 const Price = styled.div`
   font-size: 1.5rem;
+  font-weight:500;
   font-weight: bold;
+  text-align: right;
+
 `;
 
 const ProductBox = ({ _id, title, description, price, images }) => {
@@ -63,9 +75,9 @@ const ProductBox = ({ _id, title, description, price, images }) => {
         <Title href={url}> {title} </Title>
         <PriceRow>
           <Price>${price}</Price>
-          <ButtonLink onClick={() => addProduct(_id)}  href={""} primary outline>
+          <ButtonLink block  onClick={() => addProduct(_id)}  href={""} primary outline>
             <CartIcon />
-            Add to cart
+            Add to cart 
           </ButtonLink>
         </PriceRow>
       </ProductInfoBox>

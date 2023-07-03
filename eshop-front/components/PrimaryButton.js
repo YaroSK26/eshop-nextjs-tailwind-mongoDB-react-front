@@ -3,7 +3,7 @@ import { primary } from "../lib/colors";
 
 export const ButtonStyle = css`
   border: 0;
-  padding: 5px 15px;
+  padding: 5px 0px;
   border-radius: 5px;
   cursor: pointer;
   display: inline-flex;
@@ -12,14 +12,17 @@ export const ButtonStyle = css`
   gap: 10px;
   font-weight: 600;
   font-family: "Poppins ", sans-serif;
- 
+  text-align: center;
+
   svg {
     height: 16px;
   }
-  ${(props) => props.block && css`
-    display: block;
-    width: 100%;
-  `}
+  ${(props) =>
+    props.block &&
+    css`
+      display: block;
+      width: 100%;
+    `}
 
   ${(props) =>
     props.white &&
@@ -59,6 +62,22 @@ export const ButtonStyle = css`
       padding: 10px 20px;
       svg {
         height: 20px;
+      }
+    `}
+    ${(props) =>
+    props.padding === "5" &&
+    css`
+      padding: 5px 5px;
+    `}
+ ${(props) =>
+    props.padding === "10" &&
+    css`
+      padding: 5px 10px;
+      @media screen and (max-width: 768px) {
+        margin-left: 32px;
+        padding: 5px 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
       }
     `}
 `;

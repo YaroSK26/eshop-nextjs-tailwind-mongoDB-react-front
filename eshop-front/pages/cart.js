@@ -15,10 +15,13 @@ const ColumnsWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   @media screen and (min-width: 768px) {
-    grid-template-columns: 1.2fr 0.8fr;
+    grid-template-columns: 1fr;
   }
   gap: 40px;
   margin-top: 40px;
+  @media screen and (min-width: 768px) {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
 `;
 
 const Box = styled.div`
@@ -56,7 +59,7 @@ const ProductImageBox = styled.div`
 `;
 
 const QuantityLabel = styled.span`
-  padding: 0 15px;
+  padding: 0 40px;
   display: block;
   @media screen and (min-width: 768px) {
     display: inline-block;
@@ -179,7 +182,10 @@ let total = cartProducts.reduce((sum, productId) => {
                         {product.title}
                       </ProductInfoCell>
                       <td>
-                        <PrimaryButton onClick={() => lessOfThisProduct(product._id)}>
+                        <PrimaryButton
+                          padding={"10"}
+                          onClick={() => lessOfThisProduct(product._id)}
+                        >
                           -
                         </PrimaryButton>
                         <QuantityLabel>
@@ -188,7 +194,10 @@ let total = cartProducts.reduce((sum, productId) => {
                               .length
                           }
                         </QuantityLabel>
-                        <PrimaryButton onClick={() => moreOfThisProduct(product._id)}>
+                        <PrimaryButton
+                          padding={"10"}
+                          onClick={() => moreOfThisProduct(product._id)}
+                        >
                           +
                         </PrimaryButton>
                       </td>

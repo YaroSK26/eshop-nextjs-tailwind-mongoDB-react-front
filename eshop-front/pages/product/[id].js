@@ -14,9 +14,12 @@ import { CartContext } from "../../components/CartContext";
 
 const ColumnsWrapper = styled.div`
   display: grid;
-  grid-template-columns: 0.6fr 1.2fr;
+  grid-template-columns: 1fr;
   gap: 40px;
-  margin-top: 40px;
+  margin: 40px 0 ;
+  @media screen and (min-width: 768px) {
+    grid-template-columns: 0.6fr 1.2fr;
+  }
 `;
 
 const PriceRow = styled.div`
@@ -49,7 +52,7 @@ export default function ProductPage({product}){
               <PriceRow>
                 <Price>${product.price}</Price>
                 <div>
-                  <PrimaryButton primary onClick={()=> addProduct(product._id)}>
+                  <PrimaryButton padding={"5"} primary onClick={()=> addProduct(product._id)}>
                     <CartIcon></CartIcon>Add to Cart
                   </PrimaryButton>
                 </div>
