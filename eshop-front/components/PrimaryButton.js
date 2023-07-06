@@ -16,6 +16,7 @@ export const ButtonStyle = css`
 
   svg {
     height: 16px;
+    margin-right: 10px;
   }
   ${(props) =>
     props.block &&
@@ -80,6 +81,8 @@ export const ButtonStyle = css`
         margin-bottom: 10px;
       }
     `}
+
+   
 `;
 
 export const StyledButton = styled.button`

@@ -264,7 +264,7 @@ let total = cartProducts.reduce((sum, productId) => {
                 name="country"
                 onChange={(ev) => setCountry(ev.target.value)}
               />
-              <PrimaryButton primary block onClick={goToPayment}>
+              <PrimaryButton primary="true" block="true" onClick={goToPayment}>
                 Continue to payment
               </PrimaryButton>
             </Box>

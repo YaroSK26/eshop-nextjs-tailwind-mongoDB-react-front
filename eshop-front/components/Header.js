@@ -19,6 +19,7 @@ const Logo = styled(Link)`
 const Wrapper = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items:center;
   padding: 20px 0;
 `;
 const StyledNav = styled.nav`
@@ -27,7 +28,8 @@ const StyledNav = styled.nav`
       ? `
     display:block;
 
-`    : `display:none;
+`
+      : `display:none;
       `};
 
   gap: 15px;
@@ -41,7 +43,10 @@ const StyledNav = styled.nav`
   background-color: #222;
   @media screen and (min-width: 768px) {
     display: flex;
+    justify-content: space-between;
+    align-items:center;
     position: static;
+    padding: 0px ;
   }
 `;
 const NavLink = styled(Link)`
