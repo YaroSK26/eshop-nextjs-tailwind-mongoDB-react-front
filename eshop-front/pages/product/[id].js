@@ -7,10 +7,11 @@ import {mongooseConnect} from "../../lib/mongoose";
 import { Product } from "../../models/Product";
 import WhiteBox from "../../components/Box";
 import ProductImages from "../../components/ProductImages";
-import PrimaryButton from "../../components/PrimaryButton";
+import { ButtonStyle } from "../../components/PrimaryButton";
 import CartIcon from "../../icons/CartIcon";
 import { useContext } from "react";
 import { CartContext } from "../../components/CartContext";
+import FlyingButton from "../../components/FlyingButton";
 
 const ColumnsWrapper = styled.div`
   display: grid;
@@ -52,9 +53,13 @@ export default function ProductPage({product}){
               <PriceRow>
                 <Price>${product.price}</Price>
                 <div>
-                  <PrimaryButton padding={"5"} primary onClick={()=> addProduct(product._id)}>
+                  <FlyingButton
+                    primary="true"
+                     src={product.images?.[0]}
+                    _id={product._id}
+                  >
                     <CartIcon></CartIcon>Add to Cart
-                  </PrimaryButton>
+                  </FlyingButton>
                 </div>
               </PriceRow>
             </div>

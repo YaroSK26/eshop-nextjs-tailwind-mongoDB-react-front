@@ -1,13 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import Center from "./Center";
 import styled from "styled-components";
-import PrimaryButton from "./PrimaryButton";
 import ButtonLink from "./ButtonLink";
-import CartIcon from "../icons/CartIcon";
-import { useContext } from "react";
-import { CartContext } from "./CartContext";
-import {addProduct} from "./CartContext"
-
+import FlyingButton from "./FlyingButton";
+import { RevealWrapper } from "../node_modules/next-reveal";
 
 
 const Bg = styled.div`
@@ -51,7 +47,7 @@ const ColumnsWrapper = styled.div`
     div:nth-child(1) {
       order: 0;
     }
-    img {
+    img.main {
       max-width: 100%;
     }
   }
@@ -69,46 +65,40 @@ const ButtonsWrapper = styled.div`
 
 
 export default function Featured({ product }) {
-  const { addProduct } = useContext(CartContext);
-  
-  function addFeaturedToCart() {
-    addProduct(product._id);
-  }
-  
+
   return (
     <Bg>
       <Center>
         <ColumnsWrapper>
           <Column>
             <div>
-              <Title>{product.title}</Title>
-              <Desc>{product.description}</Desc>
-              <ButtonsWrapper>
-                <ButtonLink
-                  href={product._id ? "/product/" + product._id : ""}
-                  outline="true"
-                  white="true"
-                  size="l"
-                >
-                  Read more
-                </ButtonLink>
-                <ButtonLink
-                  href={""}
-                  primary="true"
-                  size="l"
-                  onClick={addFeaturedToCart}
-                >
-                  <CartIcon></CartIcon>
-                  Add to cart
-                </ButtonLink>
-              </ButtonsWrapper>
+              <RevealWrapper origin="left" delay={0}>
+                <Title>{product.title}</Title>
+                <Desc>{product.description}</Desc>
+                <ButtonsWrapper>
+                  <ButtonLink
+                    href={product._id ? "/product/" + product._id : ""}
+                    outline="true"
+                    white="true"
+                    size="l"
+                  >
+                    Read more
+                  </ButtonLink>
+                  <FlyingButton
+                    _id={product._id}
+                    src={product.images?.[0]}
+                  ></FlyingButton>
+                </ButtonsWrapper>
+              </RevealWrapper>
             </div>
           </Column>
           <Column>
-            <img
-              src="https://dawid-next-ecommerce.s3.amazonaws.com/1679151719649.png"
-              alt=""
-            />
+            <RevealWrapper delay={0}>
+              <img className="main"
+                src="https://dawid-next-ecommerce.s3.amazonaws.com/1679151719649.png"
+                alt=""
+              />
+            </RevealWrapper>
           </Column>
         </ColumnsWrapper>
       </Center>

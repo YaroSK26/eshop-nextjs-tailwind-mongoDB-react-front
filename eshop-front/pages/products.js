@@ -14,7 +14,7 @@ export default function ProductPage({products}){
         <Header></Header>
         <Center>
           <Title>Product Page</Title>
-          <ProductsGrid products={products}></ProductsGrid>
+          <ProductsGrid  products={products}></ProductsGrid>
         </Center>
       </div>
     );

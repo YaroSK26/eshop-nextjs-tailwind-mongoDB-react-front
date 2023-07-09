@@ -10,6 +10,9 @@ import { CartContext } from "../components/CartContext";
 import axios from "axios";
 import Table from "../components/Table";
 import Input from "../components/Input";
+import { RevealWrapper } from "../node_modules/next-reveal";
+import CrossIcon from "../icons/CrossIcon";
+import { primary } from "../lib/colors";
 
 const ColumnsWrapper = styled.div`
   display: grid;
@@ -71,6 +74,28 @@ const CityHolder = styled.div`
   display: flex;
   gap: 5px;
 `;
+
+const StyledButtonCross = styled.button`
+  border: 0;
+  background-color: ${primary};
+  border-radius: 5px;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: white;
+    display: block;
+    padding: 5px 0px;
+  }
+`;
+
+const CartHeaderFlex = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items:center;
+`
+
+
 
 export default function CartPage() {
   const { cartProducts, addProduct, removeProduct, clearCart } =
@@ -140,6 +165,8 @@ let total = cartProducts.reduce((sum, productId) => {
 }, 0);
 
 
+
+
   if (isSuccess) {
     return (
       <>
@@ -160,114 +187,130 @@ let total = cartProducts.reduce((sum, productId) => {
       <Header />
       <Center>
         <ColumnsWrapper>
-          <Box>
-            <h2>Cart</h2>
-            {!cartProducts?.length && <div>Your cart is empty</div>}
-            {products?.length > 0 && (
-              <Table>
-                <thead>
-                  <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map((product) => (
-                    <tr key={product._id}>
-                      <ProductInfoCell>
-                        <ProductImageBox>
-                          <img src={product.images[0]} alt="" />
-                        </ProductImageBox>
-                        {product.title}
-                      </ProductInfoCell>
-                      <td>
-                        <PrimaryButton
-                          padding={"10"}
-                          onClick={() => lessOfThisProduct(product._id)}
-                        >
-                          -
-                        </PrimaryButton>
-                        <QuantityLabel>
-                          {
-                            cartProducts.filter((id) => id === product._id)
-                              .length
-                          }
-                        </QuantityLabel>
-                        <PrimaryButton
-                          padding={"10"}
-                          onClick={() => moreOfThisProduct(product._id)}
-                        >
-                          +
-                        </PrimaryButton>
-                      </td>
-                      <td>
-                        $
-                        {cartProducts.filter((id) => id === product._id)
-                          .length * product.price}
-                      </td>
-                    </tr>
-                  ))}
-                  <tr>
-                    <td></td>
-                    <td></td>
-                    <td>${total}</td>
-                  </tr>
-                </tbody>
-              </Table>
-            )}
-          </Box>
-          {!!cartProducts?.length && (
+          <RevealWrapper delay={0}>
             <Box>
-              <h2>Order information</h2>
-              <Input
-                type="text"
-                placeholder="Name"
-                value={name}
-                name="name"
-                onChange={(ev) => setName(ev.target.value)}
-              />
-              <Input
-                type="text"
-                placeholder="Email"
-                value={email}
-                name="email"
-                onChange={(ev) => setEmail(ev.target.value)}
-              />
-              <CityHolder>
-                <Input
-                  type="text"
-                  placeholder="City"
-                  value={city}
-                  name="city"
-                  onChange={(ev) => setCity(ev.target.value)}
-                />
-                <Input
-                  type="text"
-                  placeholder="Postal Code"
-                  value={postalCode}
-                  name="postalCode"
-                  onChange={(ev) => setPostalCode(ev.target.value)}
-                />
-              </CityHolder>
-              <Input
-                type="text"
-                placeholder="Street Address"
-                value={streetAddress}
-                name="streetAddress"
-                onChange={(ev) => setStreetAddress(ev.target.value)}
-              />
-              <Input
-                type="text"
-                placeholder="Country"
-                value={country}
-                name="country"
-                onChange={(ev) => setCountry(ev.target.value)}
-              />
-              <PrimaryButton primary="true" block="true" onClick={goToPayment}>
-                Continue to payment
-              </PrimaryButton>
+              <CartHeaderFlex>
+                <h2>Cart</h2>
+                  <StyledButtonCross onClick={clearCart}>
+                    <CrossIcon />
+                  </StyledButtonCross>
+               
+              </CartHeaderFlex>
+
+              {!cartProducts?.length && <div>Your cart is empty</div>}
+              {products?.length > 0 && (
+                <Table>
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {products.map((product) => (
+                      <tr key={product._id}>
+                        <ProductInfoCell>
+                          <ProductImageBox>
+                            <img src={product.images[0]} alt="" />
+                          </ProductImageBox>
+                          {product.title}
+                        </ProductInfoCell>
+                        <td>
+                          <PrimaryButton
+                            padding={"11"}
+                            onClick={() => lessOfThisProduct(product._id)}
+                          >
+                            -
+                          </PrimaryButton>
+                          <QuantityLabel>
+                            {
+                              cartProducts.filter((id) => id === product._id)
+                                .length
+                            }
+                          </QuantityLabel>
+                          <PrimaryButton
+                            padding={"10"}
+                            onClick={() => moreOfThisProduct(product._id)}
+                          >
+                            +
+                          </PrimaryButton>
+                        </td>
+                        <td>
+                          $
+                          {cartProducts.filter((id) => id === product._id)
+                            .length * product.price}
+                        </td>
+                      </tr>
+                    ))}
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td>${total}</td>
+                    </tr>
+                  </tbody>
+                </Table>
+              )}
             </Box>
+          </RevealWrapper>
+
+          {!!cartProducts?.length && (
+            <RevealWrapper>
+              <Box>
+                <h2>Order information</h2>
+                <Input
+                  type="text"
+                  placeholder="Name"
+                  value={name}
+                  name="name"
+                  onChange={(ev) => setName(ev.target.value)}
+                />
+                <Input
+                  type="text"
+                  placeholder="Email"
+                  value={email}
+                  name="email"
+                  onChange={(ev) => setEmail(ev.target.value)}
+                />
+                <CityHolder>
+                  <Input
+                    type="text"
+                    placeholder="City"
+                    value={city}
+                    name="city"
+                    onChange={(ev) => setCity(ev.target.value)}
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Postal Code"
+                    value={postalCode}
+                    name="postalCode"
+                    onChange={(ev) => setPostalCode(ev.target.value)}
+                  />
+                </CityHolder>
+                <Input
+                  type="text"
+                  placeholder="Street Address"
+                  value={streetAddress}
+                  name="streetAddress"
+                  onChange={(ev) => setStreetAddress(ev.target.value)}
+                />
+                <Input
+                  type="text"
+                  placeholder="Country"
+                  value={country}
+                  name="country"
+                  onChange={(ev) => setCountry(ev.target.value)}
+                />
+                <PrimaryButton
+                  primary="true"
+                  block="true"
+                  onClick={goToPayment}
+                >
+                  Continue to payment
+                </PrimaryButton>
+              </Box>
+            </RevealWrapper>
           )}
         </ColumnsWrapper>
       </Center>

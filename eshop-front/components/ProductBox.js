@@ -1,14 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
 import styled from "styled-components";
-import ButtonLink from "./ButtonLink";
-import CartIcon from "../icons/CartIcon";
 import Link from "next/link";
-import { CartContext } from "./CartContext";
-import { useContext } from "react";
-
+import FlyingButton from "../components/FlyingButton";
 const ProductWrapper = styled.div`
-
+button {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+}
 `;
+
 
 const WhiteBox = styled(Link)`
   background-color: white;
@@ -23,7 +24,6 @@ const WhiteBox = styled(Link)`
     max-width: 100%;
     max-height: 80px;
   }
-  
 `;
 
 const Title = styled(Link)`
@@ -43,21 +43,20 @@ const PriceRow = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-top: 5px;
-  gap:10px;
- 
+  gap: 10px;
 
   @media screen and (min-width: 768px) {
     display: flex;
     margin-top: 2px;
 
+  
   }
 `;
 const Price = styled.div`
   font-size: 1.5rem;
-  font-weight:500;
+  font-weight: 500;
   font-weight: bold;
   text-align: right;
-
 `;
 
 
@@ -65,13 +64,12 @@ const Price = styled.div`
 
 
 const ProductBox = ({ _id, title, description, price, images }) => {
-  const { addProduct } = useContext(CartContext);
+  
   const url = "/product/" + _id;
   return (
     <ProductWrapper>
       <WhiteBox href={url}>
         <div>
-          {" "}
           <img src={images?.[0]} alt="" />
         </div>
       </WhiteBox>
@@ -79,18 +77,7 @@ const ProductBox = ({ _id, title, description, price, images }) => {
         <Title href={url}> {title} </Title>
         <PriceRow>
           <Price>${price}</Price>
-          <ButtonLink
-            block="true"
-            onClick={() => addProduct(_id)}
-            href={""}
-            primary="true"
-            outline="true"
-          >
-            
-              <CartIcon margin />
-           
-            Add to cart
-          </ButtonLink>
+                  <FlyingButton   _id={_id} src={images?.[0]}>Add to cart</FlyingButton>
         </PriceRow>
       </ProductInfoBox>
     </ProductWrapper>

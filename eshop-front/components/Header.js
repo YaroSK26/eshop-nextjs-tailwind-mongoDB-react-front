@@ -4,11 +4,15 @@ import Center from "./Center";
 import { useContext, useState } from "react";
 import { CartContext } from "./CartContext";
 import BarsIcon from "../icons/Bars";
+import SearchIcon from "../icons/SearchIcon";
 
 
 
 const StyledHeader = styled.header`
   background-color: #222;
+  position: sticky;
+  top:0;
+  z-index: 100;
 `;
 const Logo = styled(Link)`
   color: #fff;
@@ -32,7 +36,7 @@ const StyledNav = styled.nav`
       : `display:none;
       `};
 
-  gap: 15px;
+  gap: 40px;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -53,6 +57,8 @@ const NavLink = styled(Link)`
   display: block;
   color: #aaa;
   text-decoration: none;
+  min-width: 25px;
+  height: 20px;
   padding: 10px 0;
   @media screen and (min-width: 768px) {
     padding:0;
@@ -62,8 +68,8 @@ const NavLink = styled(Link)`
 
 const NavButton = styled.div`
   background-color: transparent;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   border: none;
   color: white;
   cursor: pointer;
@@ -73,6 +79,23 @@ const NavButton = styled.div`
     display: none;
   }
 `;
+
+const SideIcons = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  a {
+    display: inline-block;
+    min-width: 20px;
+    color: white;
+  }
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`
+
+
 export default function Header() {
   const {cartProducts} = useContext(CartContext) 
   const [mobileNavActive, setMobileNavActive] = useState(false)
@@ -89,9 +112,14 @@ export default function Header() {
             <NavLink href={"/account"}>Account</NavLink>
             <NavLink href={"/cart"}>Cart ({cartProducts.length})</NavLink>
           </StyledNav>
-          <NavButton onClick={() => setMobileNavActive(prev => !prev)}>
-            <BarsIcon></BarsIcon>
-          </NavButton>
+          <SideIcons>
+            <Link href={"/search"}>
+              <SearchIcon />
+            </Link>
+            <NavButton onClick={() => setMobileNavActive((prev) => !prev)}>
+              <BarsIcon></BarsIcon>
+            </NavButton>
+          </SideIcons>
         </Wrapper>
       </Center>
     </StyledHeader>

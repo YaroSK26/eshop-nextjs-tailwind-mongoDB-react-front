@@ -3,19 +3,24 @@ import { primary } from "../lib/colors";
 
 export const ButtonStyle = css`
   border: 0;
-  padding: 5px 0px;
+  font-size: 1.1rem;
+  padding: 12px 10px;
   border-radius: 5px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   text-decoration: none;
   gap: 10px;
+  color: #fff;
   font-weight: 600;
   font-family: "Poppins ", sans-serif;
   text-align: center;
+  background-color: #5542f6;
 
   svg {
-    height: 16px;
+    height: 1.2rem;
+    text-align: center;
     margin-right: 10px;
   }
   ${(props) =>
@@ -59,7 +64,7 @@ export const ButtonStyle = css`
     ${(props) =>
     props.size === "l" &&
     css`
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       padding: 10px 20px;
       svg {
         height: 20px;
@@ -74,6 +79,7 @@ export const ButtonStyle = css`
     props.padding === "10" &&
     css`
       padding: 5px 10px;
+      color: #fff;
       @media screen and (max-width: 768px) {
         margin-left: 32px;
         padding: 5px 10px;
@@ -82,7 +88,18 @@ export const ButtonStyle = css`
       }
     `}
 
-   
+     ${(props) =>
+    props.padding === "11" &&
+    css`
+      padding: 5px 11px;
+      color: #fff;
+      @media screen and (max-width: 768px) {
+        margin-left: 32px;
+        padding: 5px 12px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+    `}
 `;
 
 export const StyledButton = styled.button`

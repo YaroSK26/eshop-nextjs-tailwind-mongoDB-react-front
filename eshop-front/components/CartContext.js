@@ -1,25 +1,20 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { createContext, useEffect, useState } from "react";
 
 export const CartContext = createContext({});
+
 export function CartContextProvider({ children }) {
+  const ls = typeof window !== "undefined" ? window.localStorage : null;
   const [cartProducts, setCartProducts] = useState([]);
-
   useEffect(() => {
-    const ls = window.localStorage;
-    const cartData = ls.getItem("cart");
-
-    if (cartData) {
-      setCartProducts(JSON.parse(cartData));
+    if (cartProducts?.length > 0) {
+      ls?.setItem("cart", JSON.stringify(cartProducts));
+    }
+  }, [cartProducts, ls]);
+  useEffect(() => {
+    if (ls && ls.getItem("cart")) {
+      setCartProducts(JSON.parse(ls.getItem("cart")));
     }
   }, []);
-
-  useEffect(() => {
-    const ls = window.localStorage;
-    ls.setItem("cart", JSON.stringify(cartProducts));
-  }, [cartProducts]);
-
-  
   function addProduct(productId) {
     setCartProducts((prev) => [...prev, productId]);
   }
@@ -34,7 +29,6 @@ export function CartContextProvider({ children }) {
   }
   function clearCart() {
     setCartProducts([]);
-    ls?.removeItem("cart");
   }
   return (
     <CartContext.Provider
@@ -42,8 +36,8 @@ export function CartContextProvider({ children }) {
         cartProducts,
         setCartProducts,
         addProduct,
-        clearCart,
         removeProduct,
+        clearCart,
       }}
     >
       {children}

@@ -7,5 +7,5 @@ const StyledLink = styled(Link)`
 `;
 
 export default function ButtonLink(props) {
-  return <StyledLink {...props} />;
+  return <StyledLink href={props.href} {...props} />;
 }

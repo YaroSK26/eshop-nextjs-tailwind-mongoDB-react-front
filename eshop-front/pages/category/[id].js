@@ -137,21 +137,19 @@ export default function CategoryPage({
                 }}
               >
                 <option value="_id-asc">oldest first</option>
+                <option value="_id-desc">newest first</option>
                 <option value="price-asc">price, lowest first</option>
                 <option value="price-desc">price, hightest first</option>
-                <option value="_id-desc">newest first</option>
               </select>
             </Filter>
           </FiltersWrapper>
         </CategoryHeader>
-        {loadingProducts && (<Spinner fullWidth="true"></Spinner>)}
+        {loadingProducts && <Spinner fullWidth="true"></Spinner>}
         {!loadingProducts && (
           <div>
-            {products.length > 0 && (<ProductsGrid products={products} />)}
+            {products.length > 0 && <ProductsGrid products={products} />}
 
-            {products.length === 0 && (
-              <div>Sorry , no products found.</div>
-            )}
+            {products.length === 0 && <div>Sorry, no products found.</div>}
           </div>
         )}
       </Center>
