@@ -13,6 +13,9 @@ import Input from "../components/Input";
 import { RevealWrapper } from "../node_modules/next-reveal";
 import CrossIcon from "../icons/CrossIcon";
 import { primary } from "../lib/colors";
+import { useSession } from "next-auth/react";
+import Spinner from "../components/Spinner";
+
 
 const ColumnsWrapper = styled.div`
   display: grid;
@@ -73,12 +76,14 @@ const QuantityLabel = styled.span`
 const CityHolder = styled.div`
   display: flex;
   gap: 5px;
+  justify-content: space-between
 `;
 
 const StyledButtonCross = styled.button`
   border: 0;
   background-color: ${primary};
   border-radius: 5px;
+  cursor: pointer;
 
   svg {
     width: 20px;
@@ -93,13 +98,31 @@ const CartHeaderFlex = styled.div`
   display: flex;
   justify-content: space-between;
   align-items:center;
+
 `
 
+const SpinnerWrapper = styled.div`
+  position: relative;
+`;
+
+const SpinnerOverlay = styled.div`
+  position: absolute;
+  top: 100px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+`;
 
 
 export default function CartPage() {
   const { cartProducts, addProduct, removeProduct, clearCart } =
     useContext(CartContext);
+  const { data: session } = useSession();
   const [products, setProducts] = useState([]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -108,29 +131,39 @@ export default function CartPage() {
   const [streetAddress, setStreetAddress] = useState("");
   const [country, setCountry] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
- const [isLoading, setIsLoading] = useState(false); // Pridaný stav pre načítavanie
+  const [loaded, setLoaded] = useState(false);
 
- useEffect(() => {
-   if (cartProducts.length > 0) {
-     setIsLoading(true); // Nastavenie načítavania pred požiadavkou na server
-     axios.post("/api/cart", { ids: cartProducts }).then((response) => {
-       setProducts(response.data);
-       setIsLoading(false); // Zastavenie načítavania po úspešnom získaní údajov
-     });
-   } else {
-     setProducts([]);
-   }
+  useEffect(() => {
+    if (cartProducts.length > 0) {
+      axios.post("/api/cart", { ids: cartProducts }).then((response) => {
+        setProducts(response.data);
+      });
+    } else {
+      setProducts([]);
+    }
 
-   if (
-     typeof window !== "undefined" &&
-     window.location.href.includes("success")
-   ) {
-     setIsSuccess(true);
-     clearCart();
-   }
- }, [cartProducts, clearCart]);
-
-
+    if (
+      typeof window !== "undefined" &&
+      window.location.href.includes("success")
+    ) {
+      setIsSuccess(true);
+      clearCart();
+    }
+  }, [cartProducts, clearCart]);
+  useEffect(() => {
+    if (!session) {
+      return;
+    }
+    axios.get("/api/address").then((response) => {
+      setName(response.data.name);
+      setEmail(response.data.email);
+      setCity(response.data.city);
+      setPostalCode(response.data.postalCode);
+      setStreetAddress(response.data.streetAddress);
+      setCountry(response.data.country);
+      setLoaded(true);
+    });
+  }, [session]);
 
   function moreOfThisProduct(id) {
     addProduct(id);
@@ -138,34 +171,29 @@ export default function CartPage() {
   function lessOfThisProduct(id) {
     removeProduct(id);
   }
-async function goToPayment() {
-  const response = await axios.post("/api/checkout", {
-    name,
-    email,
-    city,
-    postalCode,
-    streetAddress,
-    country,
-    cartProducts,
-  });
-  if (response.data.url) {
-    window.location = response.data.url;
-    if (window.location.href.includes("success")) {
-      setIsSuccess(true);
-      clearCart();
+  async function goToPayment() {
+    const response = await axios.post("/api/checkout", {
+      name,
+      email,
+      city,
+      postalCode,
+      streetAddress,
+      country,
+      cartProducts,
+    });
+    if (response.data.url) {
+      window.location = response.data.url;
+      if (window.location.href.includes("success")) {
+        setIsSuccess(true);
+        clearCart();
+      }
     }
   }
-}
 
-
-
-let total = cartProducts.reduce((sum, productId) => {
-  const price = products.find((p) => p._id === productId)?.price || 0;
-  return sum + price;
-}, 0);
-
-
-
+  let total = cartProducts.reduce((sum, productId) => {
+    const price = products.find((p) => p._id === productId)?.price || 0;
+    return sum + price;
+  }, 0);
 
   if (isSuccess) {
     return (
@@ -191,10 +219,11 @@ let total = cartProducts.reduce((sum, productId) => {
             <Box>
               <CartHeaderFlex>
                 <h2>Cart</h2>
+                {cartProducts?.length > 0 && (
                   <StyledButtonCross onClick={clearCart}>
                     <CrossIcon />
                   </StyledButtonCross>
-               
+                )}
               </CartHeaderFlex>
 
               {!cartProducts?.length && <div>Your cart is empty</div>}
@@ -254,64 +283,73 @@ let total = cartProducts.reduce((sum, productId) => {
             </Box>
           </RevealWrapper>
 
-          {!!cartProducts?.length && (
-            <RevealWrapper>
-              <Box>
-                <h2>Order information</h2>
-                <Input
-                  type="text"
-                  placeholder="Name"
-                  value={name}
-                  name="name"
-                  onChange={(ev) => setName(ev.target.value)}
-                />
-                <Input
-                  type="text"
-                  placeholder="Email"
-                  value={email}
-                  name="email"
-                  onChange={(ev) => setEmail(ev.target.value)}
-                />
-                <CityHolder>
+          <RevealWrapper>
+            <Box>
+              <h2>Order information</h2>
+              {!loaded && (
+                <SpinnerWrapper>
+                  <SpinnerOverlay>
+                    <Spinner />
+                  </SpinnerOverlay>
+                </SpinnerWrapper>
+              )}
+              {!!cartProducts?.length && (
+                <>
                   <Input
                     type="text"
-                    placeholder="City"
-                    value={city}
-                    name="city"
-                    onChange={(ev) => setCity(ev.target.value)}
+                    placeholder="Name"
+                    value={name}
+                    name="name"
+                    onChange={(ev) => setName(ev.target.value)}
                   />
                   <Input
                     type="text"
-                    placeholder="Postal Code"
-                    value={postalCode}
-                    name="postalCode"
-                    onChange={(ev) => setPostalCode(ev.target.value)}
+                    placeholder="Email"
+                    value={email}
+                    name="email"
+                    onChange={(ev) => setEmail(ev.target.value)}
                   />
-                </CityHolder>
-                <Input
-                  type="text"
-                  placeholder="Street Address"
-                  value={streetAddress}
-                  name="streetAddress"
-                  onChange={(ev) => setStreetAddress(ev.target.value)}
-                />
-                <Input
-                  type="text"
-                  placeholder="Country"
-                  value={country}
-                  name="country"
-                  onChange={(ev) => setCountry(ev.target.value)}
-                />
-                <PrimaryButton
-                  primary="true"
-                  block="true"
-                  onClick={goToPayment}
-                >
-                  Continue to payment
-                </PrimaryButton>
-              </Box>
-            </RevealWrapper>
-          )}
+                  <CityHolder>
+                    <Input
+                      type="text"
+                      placeholder="City"
+                      value={city}
+                      name="city"
+                      onChange={(ev) => setCity(ev.target.value)}
+                    />
+                    <Input
+                      type="text"
+                      placeholder="Postal Code"
+                      value={postalCode}
+                      name="postalCode"
+                      onChange={(ev) => setPostalCode(ev.target.value)}
+                    />
+                  </CityHolder>
+                  <Input
+                    type="text"
+                    placeholder="Street Address"
+                    value={streetAddress}
+                    name="streetAddress"
+                    onChange={(ev) => setStreetAddress(ev.target.value)}
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Country"
+                    value={country}
+                    name="country"
+                    onChange={(ev) => setCountry(ev.target.value)}
+                  />
+                  <PrimaryButton
+                    primary="true"
+                    block="true"
+                    onClick={goToPayment}
+                  >
+                    Continue to payment
+                  </PrimaryButton>
+                </>
+              )}
+            </Box>
+          </RevealWrapper>
         </ColumnsWrapper>
       </Center>
     </>
