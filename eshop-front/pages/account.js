@@ -87,7 +87,13 @@ const AccountPage = ({ swal }) => {
                 <h2>Account details</h2>
                 {!loaded && <Spinner fullWidth={true}></Spinner>}
 
-                {loaded && (
+                {loaded && !session && (
+                    <div>
+                      <p>Login to be able to change your information</p>
+                    </div>
+                )}
+
+                {loaded && session && (
                   <>
                     <Input
                       type="text"

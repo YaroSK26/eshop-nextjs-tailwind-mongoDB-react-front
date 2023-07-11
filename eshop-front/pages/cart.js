@@ -16,7 +16,6 @@ import { primary } from "../lib/colors";
 import { useSession } from "next-auth/react";
 import Spinner from "../components/Spinner";
 
-
 const ColumnsWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
@@ -76,7 +75,7 @@ const QuantityLabel = styled.span`
 const CityHolder = styled.div`
   display: flex;
   gap: 5px;
-  justify-content: space-between
+  justify-content: space-between;
 `;
 
 const StyledButtonCross = styled.button`
@@ -97,9 +96,8 @@ const StyledButtonCross = styled.button`
 const CartHeaderFlex = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items:center;
-
-`
+  align-items: center;
+`;
 
 const SpinnerWrapper = styled.div`
   position: relative;
@@ -117,7 +115,6 @@ const SpinnerOverlay = styled.div`
   justify-content: center;
   z-index: 100;
 `;
-
 
 export default function CartPage() {
   const { cartProducts, addProduct, removeProduct, clearCart } =
@@ -286,13 +283,15 @@ export default function CartPage() {
           <RevealWrapper>
             <Box>
               <h2>Order information</h2>
-              {!loaded && (
-                <SpinnerWrapper>
-                  <SpinnerOverlay>
-                    <Spinner />
-                  </SpinnerOverlay>
-                </SpinnerWrapper>
-              )}
+              {!cartProducts?.length && <div>Your cart is empty</div>}
+              {!loaded &&
+                cartProducts?.length > 0 && session && (
+                    <SpinnerWrapper>
+                      <SpinnerOverlay>
+                        <Spinner />
+                      </SpinnerOverlay>
+                    </SpinnerWrapper>
+                  )}
               {!!cartProducts?.length && (
                 <>
                   <Input
