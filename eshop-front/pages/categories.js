@@ -6,6 +6,10 @@ import ProductBox from "../components/ProductBox";
 import styled from "styled-components";
 import Link from "next/link";
 import { RevealWrapper } from "../node_modules/next-reveal";
+import { getServerSession } from "next-auth";
+import { WishedProduct } from "../models/WishedProduct";
+import { authOptions } from "../pages/api/auth/[...nextauth]";
+import { mongooseConnect } from "../lib/mongoose";
 
 const CategoryGrid = styled.div`
   display: grid;
@@ -43,7 +47,11 @@ const ShowAllSquare = styled(Link)`
   color: #555;
   text-decoration: none;
 `;
-const categoriesPage = ({ mainCategories, categoriesProducts }) => {
+const categoriesPage = ({
+  mainCategories,
+  categoriesProducts,
+  wishedProducts=[],
+}) => {
   return (
     <>
       <Header />
@@ -62,10 +70,12 @@ const categoriesPage = ({ mainCategories, categoriesProducts }) => {
                   delay={index * 50}
                   key={`${category._id}-${p._id}`}
                 >
-                  <ProductBox {...p} />
+                  <ProductBox {...p} wished={wishedProducts.includes(p._id)} />
                 </RevealWrapper>
               ))}
-              <RevealWrapper delay={categoriesProducts[category._id].length *50}>
+              <RevealWrapper
+                delay={categoriesProducts[category._id].length * 50}
+              >
                 <ShowAllSquare href={`/category/${category._id}`}>
                   Show all &rarr;
                 </ShowAllSquare>
@@ -80,10 +90,12 @@ const categoriesPage = ({ mainCategories, categoriesProducts }) => {
 
 export default categoriesPage;
 
-export async function getServerSideProps() {
+export async function getServerSideProps(ctx) {
+  await mongooseConnect()
   const categories = await Category.find();
   const mainCategories = categories.filter((c) => !c.parent);
   const categoriesProducts = {};
+    const allFetchedProductsId = [];
   for (const mainCat of mainCategories) {
     const mainCatId = mainCat._id.toString();
     const childCatIds = categories
@@ -92,14 +104,25 @@ export async function getServerSideProps() {
     const categoriesIds = [mainCatId, ...childCatIds];
     const products = await Product.find({ category: categoriesIds }, null, {
       limit: 3,
-      sort: { _id: -1 },
-    });
+      sort: { _id: -1 }});
+    allFetchedProductsId.push(...products.map(p => p._id.toString()));
     categoriesProducts[mainCat._id] = products;
   }
+
+
+    const session = await getServerSession(ctx.req, ctx.res, authOptions);
+    const wishedProducts = session?.user
+      ? await WishedProduct.find({
+          userEmail: session.user.email,
+          product: allFetchedProductsId,
+        })
+      : [];
+
   return {
     props: {
       mainCategories: JSON.parse(JSON.stringify(mainCategories)),
       categoriesProducts: JSON.parse(JSON.stringify(categoriesProducts)),
+      wishedProducts: wishedProducts.map(i => i.product.toString()),
     },
   };
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 import Header from "../components/Header";
 import Center from "../components/Center";
 import Title from "../components/Title";
@@ -11,6 +12,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Spinner from "../components/Spinner";
 import { withSwal } from "react-sweetalert2";
+import ProductBox from "../components/ProductBox";
 
 const ColsWrapper = styled.div`
   display: grid;
@@ -24,6 +26,13 @@ const CityHolder = styled.div`
   gap: 25px;
 `;
 
+const WishedProductsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  
+`
+
 const AccountPage = ({ swal }) => {
   const { data: session } = useSession();
   const [name, setName] = useState("");
@@ -32,7 +41,9 @@ const AccountPage = ({ swal }) => {
   const [postalCode, setPostalCode] = useState("");
   const [streetAddress, setStreetAddress] = useState("");
   const [country, setCountry] = useState("");
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] = useState(true);
+  const [WishlistLoaded, setWishlistLoaded] = useState(true);
+  const [wishedProducts, setWishedProducts] = useState([])
 
   async function logout() {
     await signOut({
@@ -56,18 +67,39 @@ const AccountPage = ({ swal }) => {
       confirmButtonColor: "#5542f6k",
     });
   }
+useEffect(() => {
+  if (!session) {
+    return;
+  }
 
-  useEffect(() => {
-    axios.get("/api/address").then((res) => {
-      setName(res.data.name);
-      setEmail(res.data.email);
-      setCity(res.data.city);
-      setPostalCode(res.data.postalCode);
-      setStreetAddress(res.data.streetAddress);
-      setCountry(res.data.country);
-      setLoaded(true);
-    });
-  }, [loaded]);
+  setLoaded(false);
+  axios.get("/api/address").then((res) => {
+    setName(res.data.name);
+    setEmail(res.data.email);
+    setCity(res.data.city);
+    setPostalCode(res.data.postalCode);
+    setStreetAddress(res.data.streetAddress);
+    setCountry(res.data.country);
+    setLoaded(true);
+  });
+}, [session]);
+
+useEffect(() => {
+  if (!session) {
+    return;
+  }
+
+  setWishlistLoaded(false);
+  axios.get("/api/wishlist").then((response) => {
+    setWishedProducts(response.data.map((wp) => wp.product));
+    setWishlistLoaded(true);
+  });
+}, [session]);
+  function productRemovedFromWishlist(_id) {
+      setWishedProducts(products =>  {
+        return [...products .filter(p => p._id.toString() !== _id)]
+      });
+  }
 
   return (
     <>
@@ -78,6 +110,28 @@ const AccountPage = ({ swal }) => {
             <RevealWrapper delay={0}>
               <WhiteBox>
                 <h2>Wishlist</h2>
+                {!WishlistLoaded && <Spinner fullWidth={true}></Spinner>}
+                {!session && WishlistLoaded  && (
+                  <>
+                    <p>Login to add products to wishlist</p>
+                  </>
+                )}
+                {WishlistLoaded && session && (
+                  <WishedProductsGrid>
+                    {wishedProducts.length > 0 ? (
+                      wishedProducts.map((wp) => (
+                        <ProductBox
+                          key={wp._id}
+                          wished={true}
+                          {...wp}
+                          onRemoveFromWishlist={productRemovedFromWishlist}
+                        />
+                      ))
+                    ) : (
+                      <p>Your wishlist is empty </p>
+                    )}
+                  </WishedProductsGrid>
+                )}
               </WhiteBox>
             </RevealWrapper>
           </div>
@@ -88,9 +142,9 @@ const AccountPage = ({ swal }) => {
                 {!loaded && <Spinner fullWidth={true}></Spinner>}
 
                 {loaded && !session && (
-                    <div>
-                      <p>Login to be able to change your information</p>
-                    </div>
+                  <div>
+                    <p>Login to change your information</p>
+                  </div>
                 )}
 
                 {loaded && session && (
@@ -157,7 +211,7 @@ const AccountPage = ({ swal }) => {
                   <PrimaryButton onClick={() => logout()}>Logout</PrimaryButton>
                 )}
                 {!session && (
-                  <PrimaryButton onClick={() => login()}>Login</PrimaryButton>
+                  <PrimaryButton onClick={() => login()}>Login with Google</PrimaryButton>
                 )}
               </WhiteBox>
             </RevealWrapper>

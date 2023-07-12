@@ -129,7 +129,6 @@ export default function CartPage() {
   const [country, setCountry] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [loaded, setLoaded] = useState(false);
-
   useEffect(() => {
     if (cartProducts.length > 0) {
       axios.post("/api/cart", { ids: cartProducts }).then((response) => {
@@ -283,7 +282,7 @@ export default function CartPage() {
           <RevealWrapper>
             <Box>
               <h2>Order information</h2>
-              {!cartProducts?.length && <div>Your cart is empty</div>}
+              {!cartProducts?.length && <div>Add something to cart to see your order information</div>}
               {!loaded &&
                 cartProducts?.length > 0 && session && (
                     <SpinnerWrapper>

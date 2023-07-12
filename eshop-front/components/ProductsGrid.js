@@ -13,13 +13,13 @@ const StyledProductsGrid = styled.div`
   }
 `;
 
-const ProductsGrid = ({ products }) => {
+const ProductsGrid = ({ products, wishedProducts=[] }) => {
   return (
     <StyledProductsGrid>
       {products?.length > 0 &&
         products.map((product, index) => (
           <RevealWrapper key={product._id} delay={index * 50}>
-            <ProductBox {...product}></ProductBox>
+            <ProductBox {...product} wished={wishedProducts.includes(product._id)}></ProductBox>
           </RevealWrapper>
         ))}
     </StyledProductsGrid>

@@ -2,6 +2,13 @@
 import styled from "styled-components";
 import Link from "next/link";
 import FlyingButton from "../components/FlyingButton";
+import HeartOutlineIcon from "../icons/HeartOutlineIcon"; 
+import HeartSolidIcon from "../icons/HeartSolidIcon";
+import { useState } from "react";
+import axios from "axios";
+import { useSession } from "next-auth/react";
+import { withSwal } from "react-sweetalert2";
+
 const ProductWrapper = styled.div`
 button {
   width: 100%;
@@ -20,6 +27,7 @@ const WhiteBox = styled(Link)`
   align-items: center;
   justify-content: center;
   border-radius: 10px;
+  position: relative;
   img {
     max-width: 100%;
     max-height: 80px;
@@ -60,16 +68,70 @@ const Price = styled.div`
 `;
 
 
+const WishlistButton = styled.button`
+  border: 0;
+  width: 50px !important;
+  height: 40px;
+  padding: 10px;
+  top: 0;
+  right: 0;
+  background-color: transparent ;
+  position: absolute;
+  cursor: pointer;
+  svg {
+    width: 26px;
+    
+  }
+  ${props => props.wished ? `color: red` : `color : black;`}
+`;
 
 
 
-const ProductBox = ({ _id, title, description, price, images }) => {
-  
+
+
+const ProductBox = ({ _id, title, description, price, images,wished=false,onRemoveFromWishlist=() => {}, swal }) => {
+
+   const { data: session } = useSession();
+
   const url = "/product/" + _id;
+  const [isWished, setIsWished] = useState(wished);
+  function addToWishlist (ev){
+     ev.preventDefault();
+       const nextValue = !isWished;
+       if (nextValue == false && onRemoveFromWishlist) { 
+          onRemoveFromWishlist(_id)
+       }
+       axios.post("/api/wishlist" , {
+        product: _id
+       }).then(()=> {})
+         setIsWished(nextValue);
+     
+  }
+    function wishlistHeart(ev) {
+       ev.preventDefault();
+      swal.fire({
+        title: "To add products to the wishlist, log in to your account",
+        confirmButtonText: "Okey",
+        confirmButtonColor: "#5542f6k",
+      });
+    }
+
   return (
     <ProductWrapper>
       <WhiteBox href={url}>
         <div>
+          {session && (
+            <WishlistButton wished={isWished} onClick={addToWishlist}>
+              {isWished ? <HeartSolidIcon /> : <HeartOutlineIcon />}
+            </WishlistButton>
+          )}
+
+          {!session && (
+            <WishlistButton onClick={wishlistHeart}>
+              <HeartOutlineIcon />
+            </WishlistButton>
+          )}
+
           <img src={images?.[0]} alt="" />
         </div>
       </WhiteBox>
@@ -77,11 +139,13 @@ const ProductBox = ({ _id, title, description, price, images }) => {
         <Title href={url}> {title} </Title>
         <PriceRow>
           <Price>${price}</Price>
-                  <FlyingButton   _id={_id} src={images?.[0]}>Add to cart</FlyingButton>
+          <FlyingButton _id={_id} src={images?.[0]}>
+            Add to cart
+          </FlyingButton>
         </PriceRow>
       </ProductInfoBox>
     </ProductWrapper>
   );
 };
 
-export default ProductBox;
+export default withSwal(ProductBox);
