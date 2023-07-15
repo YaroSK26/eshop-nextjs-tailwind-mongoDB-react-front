@@ -82,7 +82,9 @@ const WishlistButton = styled.button`
     width: 26px;
     
   }
-  ${props => props.wished ? `color: red` : `color : black;`}
+  ${(props) => (props.wished ? `color: red` : `color : black;`)}
+
+
 `;
 
 

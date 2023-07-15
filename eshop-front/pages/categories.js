@@ -50,7 +50,7 @@ const ShowAllSquare = styled(Link)`
 const categoriesPage = ({
   mainCategories,
   categoriesProducts,
-  wishedProducts=[],
+  wishedProducts = [],
 }) => {
   return (
     <>
@@ -91,11 +91,11 @@ const categoriesPage = ({
 export default categoriesPage;
 
 export async function getServerSideProps(ctx) {
-  await mongooseConnect()
+  await mongooseConnect();
   const categories = await Category.find();
   const mainCategories = categories.filter((c) => !c.parent);
   const categoriesProducts = {};
-    const allFetchedProductsId = [];
+  const allFetchedProductsId = [];
   for (const mainCat of mainCategories) {
     const mainCatId = mainCat._id.toString();
     const childCatIds = categories
@@ -104,25 +104,25 @@ export async function getServerSideProps(ctx) {
     const categoriesIds = [mainCatId, ...childCatIds];
     const products = await Product.find({ category: categoriesIds }, null, {
       limit: 3,
-      sort: { _id: -1 }});
-    allFetchedProductsId.push(...products.map(p => p._id.toString()));
+      sort: { _id: -1 },
+    });
+    allFetchedProductsId.push(...products.map((p) => p._id.toString()));
     categoriesProducts[mainCat._id] = products;
   }
 
-
-    const session = await getServerSession(ctx.req, ctx.res, authOptions);
-    const wishedProducts = session?.user
-      ? await WishedProduct.find({
-          userEmail: session.user.email,
-          product: allFetchedProductsId,
-        })
-      : [];
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+  const wishedProducts = session?.user
+    ? await WishedProduct.find({
+        userEmail: session.user.email,
+        product: allFetchedProductsId,
+      })
+    : [];
 
   return {
     props: {
       mainCategories: JSON.parse(JSON.stringify(mainCategories)),
       categoriesProducts: JSON.parse(JSON.stringify(categoriesProducts)),
-      wishedProducts: wishedProducts.map(i => i.product.toString()),
+      wishedProducts: wishedProducts.map((i) => i.product.toString()),
     },
   };
 }

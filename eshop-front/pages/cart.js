@@ -15,6 +15,7 @@ import CrossIcon from "../icons/CrossIcon";
 import { primary } from "../lib/colors";
 import { useSession } from "next-auth/react";
 import Spinner from "../components/Spinner";
+import Link from "next/link";
 
 const ColumnsWrapper = styled.div`
   display: grid;
@@ -216,13 +217,17 @@ export default function CartPage() {
               <CartHeaderFlex>
                 <h2>Cart</h2>
                 {cartProducts?.length > 0 && (
-                  <StyledButtonCross onClick={clearCart}>
+                  <StyledButtonCross onClick={() => clearCart()}>
                     <CrossIcon />
                   </StyledButtonCross>
                 )}
               </CartHeaderFlex>
 
-              {!cartProducts?.length && <div>Your cart is empty</div>}
+              {!cartProducts?.length && (
+                <div>
+                  Your cart is empty. <Link href="/">Go shopping</Link>
+                </div>
+              )}
               {products?.length > 0 && (
                 <Table>
                   <thead>
@@ -262,16 +267,16 @@ export default function CartPage() {
                           </PrimaryButton>
                         </td>
                         <td>
-                          $
                           {cartProducts.filter((id) => id === product._id)
                             .length * product.price}
+                          €
                         </td>
                       </tr>
                     ))}
                     <tr>
                       <td></td>
                       <td></td>
-                      <td>${total}</td>
+                      <td>{total}€</td>
                     </tr>
                   </tbody>
                 </Table>
@@ -282,15 +287,16 @@ export default function CartPage() {
           <RevealWrapper>
             <Box>
               <h2>Order information</h2>
-              {!cartProducts?.length && <div>Add something to cart to see your order information</div>}
-              {!loaded &&
-                cartProducts?.length > 0 && session && (
-                    <SpinnerWrapper>
-                      <SpinnerOverlay>
-                        <Spinner />
-                      </SpinnerOverlay>
-                    </SpinnerWrapper>
-                  )}
+              {!cartProducts?.length && (
+                <div>Add something to cart to see your order information</div>
+              )}
+              {!loaded && cartProducts?.length > 0 && session && (
+                <SpinnerWrapper>
+                  <SpinnerOverlay>
+                    <Spinner />
+                  </SpinnerOverlay>
+                </SpinnerWrapper>
+              )}
               {!!cartProducts?.length && (
                 <>
                   <Input
@@ -353,3 +359,5 @@ export default function CartPage() {
     </>
   );
 }
+
+
