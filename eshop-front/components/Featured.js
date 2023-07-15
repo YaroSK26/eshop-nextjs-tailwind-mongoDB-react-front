@@ -40,11 +40,17 @@ const ColumnsWrapper = styled.div`
   }
   div:nth-child(1) {
     order: 2;
+
+    margin-right: auto;
+    margin-left: auto;  
+    @media screen and (max-width: 768px) {
+      margin-left: auto;
+    }
   }
 
   @media screen and (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
-    div:nth-child(1) {
+    & > div:nth-child(1) {
       order: 0;
     }
     img.main {
@@ -64,6 +70,12 @@ const ButtonsWrapper = styled.div`
 `;
 
 
+const ImgColumn = styled.div`
+   & > div {
+      width: 100%;}
+`
+
+
 export default function Featured({ product }) {
 
   return (
@@ -73,33 +85,34 @@ export default function Featured({ product }) {
           <Column>
             <div>
               <RevealWrapper origin="left" delay={0}>
-                <Title>{product.title}</Title>
-                <Desc>{product.description}</Desc>
-                <ButtonsWrapper>
-                  <ButtonLink
-                    href={product._id ? "/product/" + product._id : ""}
-                    outline="true"
-                    white="true"
-                    size="l"
-                  >
-                    Read more
-                  </ButtonLink>
-                  <FlyingButton
-                    _id={product._id}
-                    src={product.images?.[0]}
-                  ></FlyingButton>
-                </ButtonsWrapper>
+
+                  <Title>{product.title}</Title>
+                  <Desc>{product.description}</Desc>
+                  <ButtonsWrapper>
+                    <ButtonLink
+                      href={product._id ? "/product/" + product._id : ""}
+                      outline="true"
+                      white="true"
+                      size="l"
+                    >
+                      Read more
+                    </ButtonLink>
+                    <FlyingButton
+                      _id={product._id}
+                      src={product.images?.[0]}
+                    ></FlyingButton>
+                  </ButtonsWrapper>
+                
               </RevealWrapper>
             </div>
           </Column>
-          <Column>
+          <ImgColumn>
             <RevealWrapper delay={0}>
-              <img className="main"
-                src="https://dawid-next-ecommerce.s3.amazonaws.com/1679151719649.png"
-                alt=""
-              />
+             
+                <img className="main" src={product.images?.[0]} alt="" />
+             
             </RevealWrapper>
-          </Column>
+          </ImgColumn>
         </ColumnsWrapper>
       </Center>
     </Bg>
