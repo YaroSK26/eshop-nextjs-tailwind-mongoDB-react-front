@@ -37,8 +37,12 @@ export function CartContextProvider({ children }) {
 
 function clearCart() {
   ls?.removeItem("cart");
-
+  
 }
+
+ function clearCartWithX() {
+   setCartProducts([])
+ }
 
 
   return (
@@ -49,6 +53,7 @@ function clearCart() {
         addProduct,
         removeProduct,
         clearCart,
+        clearCartWithX,
       }}
     >
       {children}

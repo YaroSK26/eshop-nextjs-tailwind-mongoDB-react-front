@@ -25,7 +25,26 @@ const ColumnsWrapper = styled.div`
   }
   gap: 40px;
   margin-top: 40px;
-  @media screen and (min-width: 768px) {
+  table thead tr th:nth-child(3),
+  table tbody tr td:nth-child(3),
+  table tbody tr.subtotal td:nth-child(2) {
+    text-align: right;
+  }
+
+  table tr.subtotal td {
+    padding: 15px 0;
+  }
+
+  table tbody tr.subtotal td:nth-child(2) {
+    font-size: 1.2rem;
+  }
+
+  .total {
+    font-weight: bold;
+  }
+
+  
+   @media screen and (min-width: 768px) {
     grid-template-columns: 1.2fr 0.8fr;
   }
 `;
@@ -118,7 +137,7 @@ const SpinnerOverlay = styled.div`
 `;
 
 export default function CartPage() {
-  const { cartProducts, addProduct, removeProduct, clearCart } =
+  const { cartProducts, addProduct, removeProduct, clearCart, clearCartWithX } =
     useContext(CartContext);
   const { data: session } = useSession();
   const [products, setProducts] = useState([]);
@@ -130,6 +149,9 @@ export default function CartPage() {
   const [country, setCountry] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [shippingFee, setShippingFee] = useState(null); 
+
+
   useEffect(() => {
     if (cartProducts.length > 0) {
       axios.post("/api/cart", { ids: cartProducts }).then((response) => {
@@ -146,7 +168,11 @@ export default function CartPage() {
       setIsSuccess(true);
       clearCart();
     }
-  }, [cartProducts, clearCart]);
+    axios.get("/api/settings?name=shippingFee").then(res => {
+     
+        setShippingFee(res.data.value);
+    })
+  }, [cartProducts, clearCart, shippingFee]);
   useEffect(() => {
     if (!session) {
       return;
@@ -187,7 +213,8 @@ export default function CartPage() {
     }
   }
 
-  let total = cartProducts.reduce((sum, productId) => {
+ 
+  let productsTotal = cartProducts.reduce((sum, productId) => {
     const price = products.find((p) => p._id === productId)?.price || 0;
     return sum + price;
   }, 0);
@@ -217,7 +244,7 @@ export default function CartPage() {
               <CartHeaderFlex>
                 <h2>Cart</h2>
                 {cartProducts?.length > 0 && (
-                  <StyledButtonCross onClick={() => clearCart()}>
+                  <StyledButtonCross onClick={() => clearCartWithX()}>
                     <CrossIcon />
                   </StyledButtonCross>
                 )}
@@ -273,11 +300,20 @@ export default function CartPage() {
                         </td>
                       </tr>
                     ))}
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td>{total}€</td>
+                    <tr className="subtotal">
+                      <td colSpan={2}>Products</td>
+
+                      <td>{productsTotal}€</td>
                     </tr>
+                    <tr className="subtotal">
+                      <td colSpan={2}>Shipping</td>
+                      <td>{shippingFee}€</td>
+                    </tr>
+                    <tr className=" subtotal total">
+                      <td colSpan={2}>Total</td>
+                      <td>{productsTotal + parseInt( shippingFee || 0)}€</td>
+                    </tr>
+                     
                   </tbody>
                 </Table>
               )}
@@ -359,5 +395,4 @@ export default function CartPage() {
     </>
   );
 }
-
 
