@@ -9,6 +9,7 @@ import WhiteBox from "../../components/Box";
 import ProductImages from "../../components/ProductImages";
 import CartIcon from "../../icons/CartIcon";
 import FlyingButton from "../../components/FlyingButton";
+import ProductReviews from "../../components/ProductReviews";
 
 
 const ColWrapper = styled.div`
@@ -43,7 +44,7 @@ export default function ProductPage({ product }) {
             <p>{product.description}</p>
             <PriceRow>
               <div>
-                <Price>${product.price}</Price>
+                <Price>{product.price}€</Price>
               </div>
               <div>
                 <FlyingButton main _id={product._id} src={product.images?.[0]}>
@@ -54,6 +55,8 @@ export default function ProductPage({ product }) {
             </PriceRow>
           </div>
         </ColWrapper>
+
+          <ProductReviews product={product}></ProductReviews>
       </Center>
     </>
   );

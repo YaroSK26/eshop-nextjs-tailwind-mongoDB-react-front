@@ -1,9 +1,9 @@
 import { mongooseConnect } from "../../lib/mongoose";
-const stripe = require("stripe")(process.env.STRIPE_SK);
 import { buffer } from "micro";
 import { Order } from "../../models/Order";
+import { stripe } from "../../lib/stripe";
 
-const endpointSecret = "whsec_825a33769bf42ee00465653d87809cfaf9b005366e07634230883d3177ecdc40";
+const endpointSecret =  "whsec_825a33769bf42ee00465653d87809cfaf9b005366e07634230883d3177ecdc40";
 
 export default async function handler(req, res) {
   await mongooseConnect();
@@ -25,13 +25,17 @@ export default async function handler(req, res) {
   // Handle the event
   switch (event.type) {
     case "checkout.session.completed":
-      const data = event.data.object;
-      const orderId = data.metadata.orderId;
-      const paid = data.payment_status === "paid";
-      if (orderId && paid) {
-        await Order.findByIdAndUpdate(orderId, {
-          paid: true,
-        });
+      const session = event.data.object;
+      const userEmail = session.customer_email;
+      const orderId = session.metadata.orderId;
+      const paid = session.payment_status === "paid";
+
+      if (orderId && userEmail && paid) {
+        const order = await Order.findById(orderId);
+        if (order && order.userEmail === userEmail) {
+          order.paid = true;
+          await order.save();
+        }
       }
       break;
     default:

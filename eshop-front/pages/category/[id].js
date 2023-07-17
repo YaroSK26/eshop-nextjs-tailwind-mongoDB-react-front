@@ -8,6 +8,10 @@ import styled from "styled-components";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Spinner from "../../components/Spinner";
+import { WishedProduct } from "../../models/WishedProduct";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../../pages/api/auth/[...nextauth]";
+
 
 const CategoryHeader = styled.div`
   display: flex;
@@ -38,16 +42,19 @@ const Filter = styled.div`
   }
 `;
 
-
 export default function CategoryPage({
   category,
   subCategories,
   products: originalProducts,
+  wishedProducts,
 }) {
   const [products, setProducts] = useState(originalProducts);
-  
+
   const defaulSorting = "_id-asc";
-  const defaultFiltersValues =  category.properties.map((p) => ({ name: p.name, value: "all" }));
+  const defaultFiltersValues = category.properties.map((p) => ({
+    name: p.name,
+    value: "all",
+  }));
   const [sort, setSort] = useState(defaulSorting);
   const [filtersValues, setFiltersValues] = useState(defaultFiltersValues);
   const [loadingProducts, setLoadingProducts] = useState(false);
@@ -96,8 +103,7 @@ export default function CategoryPage({
       setProducts(sortedProducts);
       setLoadingProducts(false);
     }, 100); // Oneskorzenie 1 sekunda
-
-  }, [filtersValues, originalProducts, sort,filtersChanged]);
+  }, [filtersValues, originalProducts, sort, filtersChanged]);
 
   return (
     <>
@@ -147,7 +153,12 @@ export default function CategoryPage({
         {loadingProducts && <Spinner fullWidth="true"></Spinner>}
         {!loadingProducts && (
           <div>
-            {products.length > 0 && <ProductsGrid products={products} />}
+            {products.length > 0 && (
+              <ProductsGrid
+                wishedProducts={wishedProducts.map((i) => i.product.toString())}
+                products={products}
+              />
+            )}
 
             {products.length === 0 && <div>Sorry, no products found.</div>}
           </div>
@@ -157,17 +168,30 @@ export default function CategoryPage({
   );
 }
 
-export async function getServerSideProps(context) {
-  const category = await Category.findById(context.query.id);
-  const subCategories = await Category.find({ parent: category._id });
-  const catIds = [category._id, ...subCategories.map((c) => c._id)];
-  const products = await Product.find({ category: catIds });
 
-  return {
-    props: {
-      category: JSON.parse(JSON.stringify(category)),
-      subCategories: JSON.parse(JSON.stringify(subCategories)),
-      products: JSON.parse(JSON.stringify(products)),
-    },
-  };
-}
+
+ export async function getServerSideProps(ctx) {
+   const session = await getServerSession(ctx.req, ctx.res, authOptions);
+   const category = await Category.findById(ctx.query.id);
+   const subCategories = await Category.find({ parent: category._id });
+   const catIds = [category._id, ...subCategories.map((c) => c._id)];
+   const products = await Product.find({ category: catIds });
+
+   const allFetchedProductsId = products.map((p) => p._id.toString());
+
+   const wishedProducts = session?.user
+     ? await WishedProduct.find({
+         userEmail: session.user.email,
+         product: allFetchedProductsId,
+       })
+     : [];
+
+   return {
+     props: {
+       category: JSON.parse(JSON.stringify(category)),
+       subCategories: JSON.parse(JSON.stringify(subCategories)),
+       products: JSON.parse(JSON.stringify(products)),
+       wishedProducts: JSON.parse(JSON.stringify(wishedProducts)),
+     },
+   };
+ }

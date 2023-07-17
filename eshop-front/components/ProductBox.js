@@ -140,7 +140,7 @@ const ProductBox = ({ _id, title, description, price, images,wished=false,onRemo
       <ProductInfoBox>
         <Title href={url}> {title} </Title>
         <PriceRow>
-          <Price>${price}</Price>
+          <Price>{price}€</Price>
           <FlyingButton _id={_id} src={images?.[0]}>
             Add to cart
           </FlyingButton>

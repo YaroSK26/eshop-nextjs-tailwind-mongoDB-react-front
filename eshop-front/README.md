@@ -40,5 +40,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
  <!-- 
 
   !paid problem , order ukaze aj ked sa vrati z continue to payment
-  !wishlist product v category id , nie su oznacene 
   -->

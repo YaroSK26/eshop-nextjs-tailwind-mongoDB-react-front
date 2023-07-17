@@ -6,7 +6,7 @@ import { mongooseConnect } from "../lib/mongoose";
 import { Product } from "../models/Product";
 import {WishedProduct} from "../models/WishedProduct";
 import { authOptions } from "../pages/api/auth/[...nextauth]";
-import { Setting } from "../models/Settings";
+import { Setting } from "../models/Setting";
 
 
 export default function HomePage({ featuredProduct, newProducts, wishedNewProducts }) {

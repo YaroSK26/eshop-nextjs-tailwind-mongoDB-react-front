@@ -84,7 +84,7 @@ export default function Featured({ product }) {
         <ColumnsWrapper>
           <Column>
             <div>
-              <RevealWrapper origin="left" delay={0}>
+              <RevealWrapper  delay={0}>
 
                   <Title>{product.title}</Title>
                   <Desc>{product.description}</Desc>

@@ -73,8 +73,7 @@ const AccountPage = ({ swal }) => {
   function saveCompleted() {
     swal.fire({
       title: "Your account informations has been saved",
-      confirmButtonText: "Okey",
-      confirmButtonColor: "#5542f6k",
+      icon : "success",
     });
   }
   useEffect(() => {
@@ -154,6 +153,9 @@ const AccountPage = ({ swal }) => {
                     )}
                   </div>
                 )}
+
+
+                
                 {activeTab === "Wishlist" && (
                   <div>
                     {!WishlistLoaded && <Spinner fullWidth={true}></Spinner>}
