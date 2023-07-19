@@ -1,9 +1,6 @@
-/* eslint-disable react/jsx-key */
 import styled from "styled-components";
 import Center from "./Center";
 import ProductsGrid from "./ProductsGrid";
-
-
 
 const Title = styled.h2`
   font-size: 2rem;
@@ -11,11 +8,16 @@ const Title = styled.h2`
 `;
 
 export default function NewProducts({ products, wishedProducts }) {
+  // Get the last 8 products
+  const lastEightProducts = products.slice(-8);
+
   return (
     <Center>
       <Title>New Arrivals</Title>
-      <ProductsGrid products={products} wishedProducts={wishedProducts}></ProductsGrid>
-   
+      <ProductsGrid
+        products={lastEightProducts}
+        wishedProducts={wishedProducts}
+      />
     </Center>
   );
 }

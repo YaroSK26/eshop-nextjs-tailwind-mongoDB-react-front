@@ -19,6 +19,11 @@ export default async function handler(req, res) {
     country,
     cartProducts,
   } = req.body;
+  if (!email) {
+      res.status(400).json({ error: "Email is required." });
+    return;
+  }
+
   await mongooseConnect();
   const productsIds = cartProducts;
   const uniqueIds = [...new Set(productsIds)];
@@ -36,7 +41,7 @@ export default async function handler(req, res) {
         price_data: {
           currency: "EUR",
           product_data: { name: productInfo.title },
-          unit_amount: (quantity * productInfo.price * 100) / quantity,
+          unit_amount: quantity * productInfo.price * 100 / quantity,
         },
       });
     }
@@ -56,9 +61,8 @@ export default async function handler(req, res) {
     userEmail: session?.user?.email,
   });
 
-  const shippingFeeSettings = await Setting.findOne({name: "shippingFee"})
-  const shippingFeeCents = parseInt(shippingFeeSettings.value || "0") *100
-
+  const shippingFeeSetting = await Setting.findOne({ name: "shippingFee" });
+  const shippingFeeCents = parseInt(shippingFeeSetting.value || "0") * 100;
 
   const stripeSession = await stripe.checkout.sessions.create({
     line_items,

@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-key */
 import Header from "../components/Header";
 import Center from "../components/Center";
-import Title from "../components/Title";
 import { signOut, useSession, signIn } from "next-auth/react";
 import PrimaryButton from "../components/PrimaryButton";
 import styled from "styled-components";
@@ -94,9 +93,14 @@ const AccountPage = ({ swal }) => {
 
         axios.get("api/orders").then((response) => {
           setOrders(response.data);
+
           setOrderLoaded(true);
         });
   }, [session ,setOrderLoaded, setOrders]);
+
+  
+
+  
 
   useEffect(() => {
     if (!session) {
@@ -126,7 +130,6 @@ const AccountPage = ({ swal }) => {
             <RevealWrapper delay={0}>
               <WhiteBox>
                 <Tabs
-                  
                   tabs={["Orders", "Wishlist"]}
                   active={activeTab}
                   onChange={setActiveTab}
@@ -148,14 +151,14 @@ const AccountPage = ({ swal }) => {
                           </div>
                         )}
                         {orders.length > 0 &&
-                          orders.map((o) => <SingleOrder {...o}></SingleOrder>)}
+                          orders
+                            .filter((o) => o.paid === true)
+                            .map((o) => <SingleOrder key={o._id} {...o} />)}
                       </div>
                     )}
                   </div>
                 )}
 
-
-                
                 {activeTab === "Wishlist" && (
                   <div>
                     {!WishlistLoaded && <Spinner fullWidth={true}></Spinner>}
@@ -168,9 +171,8 @@ const AccountPage = ({ swal }) => {
                       <WishedProductsGrid>
                         {wishedProducts.length > 0 ? (
                           wishedProducts.map((wp) => (
-                            <BorderWishlist>
+                            <BorderWishlist key={wp._id}>
                               <ProductBox
-                                key={wp._id}
                                 wished={true}
                                 {...wp}
                                 onRemoveFromWishlist={

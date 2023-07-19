@@ -16,6 +16,7 @@ import { primary } from "../lib/colors";
 import { useSession } from "next-auth/react";
 import Spinner from "../components/Spinner";
 import Link from "next/link";
+import { withSwal } from "react-sweetalert2";
 
 const ColumnsWrapper = styled.div`
   display: grid;
@@ -135,8 +136,7 @@ const SpinnerOverlay = styled.div`
   justify-content: center;
   z-index: 100;
 `;
-
-export default function CartPage() {
+ function CartPage({swal}) {
   const { cartProducts, addProduct, removeProduct, clearCart, clearCartWithX } =
     useContext(CartContext);
   const { data: session } = useSession();
@@ -204,6 +204,20 @@ export default function CartPage() {
       country,
       cartProducts,
     });
+     if (
+       name === "" ||
+       email === "" ||
+       city === "" ||
+       postalCode === "" ||
+       streetAddress === "" ||
+       country === ""
+     ) {
+       swal.fire({
+         title: "Please fill in all required fields",
+         icon: "error",
+       });
+       return;
+     }
     if (response.data.url) {
       window.location = response.data.url;
       if (window.location.href.includes("success")) {
@@ -343,7 +357,7 @@ export default function CartPage() {
                     onChange={(ev) => setName(ev.target.value)}
                   />
                   <Input
-                    type="text"
+                    type="email"
                     placeholder="Email"
                     value={email}
                     name="email"
@@ -396,3 +410,6 @@ export default function CartPage() {
   );
 }
 
+
+
+export default withSwal(CartPage);
