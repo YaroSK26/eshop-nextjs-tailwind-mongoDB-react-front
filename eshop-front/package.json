@@ -19,7 +19,6 @@
     "next-reveal": "^1.0.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-flying-item": "^1.1.2",
     "react-modal": "^3.16.1",
     "react-spinners": "^0.13.8",
     "react-sweetalert2": "^0.5.2",
