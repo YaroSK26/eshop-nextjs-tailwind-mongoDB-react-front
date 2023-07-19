@@ -8,7 +8,7 @@ import { CartContext } from "./CartContext";
 const FlyingButtonWrapper = styled.div`
   button {
     ${ButtonStyle};
-    margin-bottom: 10px;
+   
   }
 
   @keyframes fly {

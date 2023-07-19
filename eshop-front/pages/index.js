@@ -18,6 +18,7 @@ export default function HomePage({ featuredProduct, newProducts, wishedNewProduc
         products={newProducts}
         wishedProducts={wishedNewProducts}
       ></NewProducts>
+      <br />
     </div>
   );
 }
