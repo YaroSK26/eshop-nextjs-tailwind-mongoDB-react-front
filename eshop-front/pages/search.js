@@ -52,11 +52,15 @@ const SearchPage = () => {
           autoFocus
           placeholder="Search for products..."
         />
-        {!isLoading && phrase !== "" && products.length === 0 && (
-          <h2>No products found for query: {phrase} </h2>
-        )}
+        {!isLoading &&
+          phrase !== "" &&
+          products.length === 0 && (
+            <h2>No products found for query: {phrase} </h2>
+          )}
+
+          
         {isLoading && <Spinner fullWidth={true}></Spinner>}
-        {!isLoading && products.length > 0 && (
+        {!isLoading &&  phrase !== "" &&products.length > 0 && (
           <ProductsGrid products={products}></ProductsGrid>
         )}
       </Center>

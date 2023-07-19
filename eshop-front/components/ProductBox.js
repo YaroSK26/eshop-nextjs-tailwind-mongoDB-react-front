@@ -8,6 +8,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { withSwal } from "react-sweetalert2";
+import { useRouter } from "next/router";
+
 
 const ProductWrapper = styled.div`
 button {
@@ -97,6 +99,7 @@ const ProductBox = ({ _id, title, description, price, images,wished=false,onRemo
 
   const url = "/product/" + _id;
   const [isWished, setIsWished] = useState(wished);
+  const router = useRouter();
   function addToWishlist (ev){
      ev.preventDefault();
        const nextValue = !isWished;
@@ -117,12 +120,13 @@ const ProductBox = ({ _id, title, description, price, images,wished=false,onRemo
         confirmButtonColor: "#5542f6k",
       });
     }
+      const search = router.asPath.includes("/search");
 
   return (
     <ProductWrapper>
       <WhiteBox href={url}>
         <div>
-          {session && (
+          {session &&  !search &&(
             <WishlistButton wished={isWished} onClick={addToWishlist}>
               {isWished ? <HeartSolidIcon /> : <HeartOutlineIcon />}
             </WishlistButton>
@@ -133,6 +137,8 @@ const ProductBox = ({ _id, title, description, price, images,wished=false,onRemo
               <HeartOutlineIcon />
             </WishlistButton>
           )}
+
+         
 
           <img src={images?.[0]} alt="" />
         </div>
