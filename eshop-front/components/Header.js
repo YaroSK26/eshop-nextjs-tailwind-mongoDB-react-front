@@ -84,14 +84,15 @@ const SideIcons = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  gap:10px;
   a {
     display: inline-block;
     min-width: 20px;
     color: white;
   }
   svg {
-    width: 16px;
-    height: 16px;
+    width: inherit;
+    height: inherit;
   }
 `
 

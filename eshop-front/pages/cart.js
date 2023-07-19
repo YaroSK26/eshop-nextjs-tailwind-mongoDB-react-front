@@ -22,7 +22,7 @@ const ColumnsWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   @media screen and (min-width: 768px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
   gap: 40px;
   margin-top: 40px;
@@ -227,6 +227,14 @@ const SpinnerOverlay = styled.div`
     }
   }
 
+  function  goToAlertPayment(){
+    swal.fire({
+      title: "This is a test store. No real payments are accepted",
+      text: "but the payment system works, don't worry :)",
+      icon: "error",
+    });
+  }
+
  
   let productsTotal = cartProducts.reduce((sum, productId) => {
     const price = products.find((p) => p._id === productId)?.price || 0;
@@ -396,7 +404,8 @@ const SpinnerOverlay = styled.div`
                   <PrimaryButton
                     primary="true"
                     block="true"
-                    onClick={goToPayment}
+                    // onClick={goToPayment}
+                    onClick={goToAlertPayment}
                   >
                     Continue to payment
                   </PrimaryButton>
