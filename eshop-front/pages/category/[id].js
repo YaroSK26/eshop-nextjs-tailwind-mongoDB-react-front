@@ -20,11 +20,20 @@ const CategoryHeader = styled.div`
   h1 {
     font-size: 1.5rem;
   }
+  @media screen and (max-width: 730px) {
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+    align-items:flex-start;
+  }
 `;
 
 const FiltersWrapper = styled.div`
   display: flex;
   gap: 15px;
+  @media screen and (max-width: 730px) {
+    flex-direction: column;
+  
+  }
 `;
 
 const Filter = styled.div`
@@ -39,6 +48,7 @@ const Filter = styled.div`
     border: 0;
     font-size: inherit;
     color: #444;
+    outline: none;
   }
 `;
 

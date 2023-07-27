@@ -30,7 +30,7 @@ export async function getServerSideProps(ctx) {
   const featuredProduct = await Product.findById(featuredProductId);
   const newProducts = await Product.find({}, null, {
     sort: { _id: -1 },
-    limit: 10,
+    limit: 8,
   });
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
   const wishedNewProducts = session?.user

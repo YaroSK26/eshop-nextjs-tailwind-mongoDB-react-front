@@ -12,11 +12,12 @@ import { useRouter } from "next/router";
 
 
 const ProductWrapper = styled.div`
-button {
-  width: 100%;
-  text-align: center;
-  justify-content: center;
-}
+  button {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
+ 
 `;
 
 

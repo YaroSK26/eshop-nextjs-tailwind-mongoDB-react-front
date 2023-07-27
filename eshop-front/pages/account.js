@@ -33,7 +33,10 @@ const CityHolder = styled.div`
 const WishedProductsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 30px;
+  @media screen and (max-width: 580px) {
+    grid-template-columns: 1fr;
+  } 
 `;
 
 const BorderWishlist = styled.div`
@@ -177,6 +180,7 @@ const AccountPage = ({ swal }) => {
                             <BorderWishlist key={wp._id}>
                               <ProductBox
                                 wished={true}
+                              
                                 {...wp}
                                 onRemoveFromWishlist={
                                   productRemovedFromWishlist

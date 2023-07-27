@@ -42,6 +42,7 @@ function clearCart() {
 
  function clearCartWithX() {
    setCartProducts([])
+   ls?.removeItem("cart");
  }
 
 
