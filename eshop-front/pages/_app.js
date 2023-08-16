@@ -1,6 +1,7 @@
 import { createGlobalStyle } from "styled-components";
 import {CartContextProvider} from "../components/CartContext";
 import { SessionProvider } from "next-auth/react";
+import { CrispProvider } from "../components/CrispProvider";
 
 const GlobalStyles = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
@@ -22,7 +23,7 @@ function MyApp({ Component, pageProps : {session , ...pageProps} }) {
   return (
     <>
       <SessionProvider>
-      
+        <CrispProvider/>
         <GlobalStyles />
         <CartContextProvider session={session}>
           <Component {...pageProps} />
