@@ -404,8 +404,8 @@ const SpinnerOverlay = styled.div`
                   <PrimaryButton
                     primary="true"
                     block="true"
-                    // onClick={goToPayment}
-                    onClick={goToAlertPayment}
+                     onClick={goToPayment}
+                   // onClick={goToAlertPayment}
                   >
                     Continue to payment
                   </PrimaryButton>
